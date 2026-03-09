@@ -1,0 +1,9 @@
+# Lock files
+node_modules
+dist
+build
+coverage
+storybook-static
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
