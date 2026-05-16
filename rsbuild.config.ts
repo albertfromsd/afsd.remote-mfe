@@ -1,15 +1,15 @@
-import path from 'node:path';
 import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { aliases } from './config.alias';
 
-const appDirectory = __dirname;
-const resolveApp = (...segments: string[]) => path.resolve(appDirectory, ...segments);
+const analyze = process.env.ANALYZE === 'true';
 
 const { publicVars, rawPublicVars } = loadEnv({
   prefixes: ['PUBLIC_', 'APP_'],
 });
+
+const HOST_TEMPLATE_URL = rawPublicVars.PUBLIC_HOST_TEMPLATE_URL ?? 'http://localhost:3000';
 
 export default defineConfig({
   plugins: [pluginReact(), pluginSass()],
@@ -42,17 +42,38 @@ export default defineConfig({
     title: 'MFE Remote App',
   },
 
+  performance: analyze
+    ? {
+        bundleAnalyze: {
+          analyzerMode: 'static',
+          openAnalyzer: true,
+        },
+      }
+    : undefined,
+
   moduleFederation: {
     options: {
       name: 'remoteTemplate',
       filename: 'remoteEntry.js',
+
+      runtimePlugins: ['./src/lib/mfRuntimePlugin.ts'],
 
       exposes: {
         './App': './src/App',
       },
 
       remotes: {
-        hostTemplate: 'hostTemplate@http://localhost:3000/hostRemoteEntry.js',
+        hostTemplate: `hostTemplate@${HOST_TEMPLATE_URL}/hostRemoteEntry.js`,
+      },
+
+      // rsbuild's ModuleFederationConfig type wraps @rspack/core's
+      // ModuleFederationPluginOptions, which lags the @module-federation/enhanced
+      // plugin's runtime support for `dts`. The plugin DOES read this option at
+      // runtime and emits @mf-types/ for consumes/exposes.
+      // @ts-expect-error -- dts is supported by the runtime plugin but missing from the wrapper type
+      dts: {
+        generateTypes: true,
+        consumeTypes: true,
       },
 
       shared: {
