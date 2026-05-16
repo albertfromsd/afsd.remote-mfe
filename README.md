@@ -124,17 +124,26 @@ store with the _same shape_ as the host's. It's used:
 1. In standalone mode (host unreachable).
 2. In unit tests, where federation isn't wired.
 
-The shape **must** match the host's `SessionState`. The `dts` plugin
-auto-generates this declaration into `@mf-types/` (see Type sharing below);
-the hand-written `src/hostRemotes.d.ts` is a manual fallback while the
-template is being developed.
+The shape **must** match the host's `SessionState`. The hand-written
+[src/hostRemotes.d.ts](src/hostRemotes.d.ts) declares the federated
+module shape and is the current source of truth for the consuming side.
 
 ### Type sharing across the federation boundary
 
-The `dts` option on `@module-federation/enhanced` (configured in
-[rsbuild.config.ts](rsbuild.config.ts)) emits `.d.ts` declarations for
-exposes and pulls remote types into `@mf-types/`. The directory is
-gitignored and referenced from `tsconfig.json` via `"*": ["./@mf-types/*"]`.
+The `dts` option on `@module-federation/enhanced` is configured in
+[rsbuild.config.ts](rsbuild.config.ts) to auto-generate `.d.ts` declarations
+into `@mf-types/` (gitignored, referenced from `tsconfig.json` via
+`"*": ["./@mf-types/*"]`).
+
+**Current status**: the wiring is in place but the rsbuild wrapper isn't
+emitting `@mf-types/` reliably (the wrapper's type import lags behind
+`@module-federation/enhanced`'s runtime support — hence the
+`@ts-expect-error` in the config). Until that gets sorted, three places
+must stay aligned by hand when the session shape changes:
+
+1. Host's `src/stores/session.ts` (canonical)
+2. This repo's `src/stores/localSession.ts` (standalone fallback shape)
+3. This repo's `src/hostRemotes.d.ts` (federated module type)
 
 ## Adding a new internal route
 
@@ -192,6 +201,6 @@ src/
 ├── stores/
 │   ├── sessionAccessor.ts        # federated-or-local accessor (use this in components)
 │   └── localSession.ts           # standalone fallback (same shape as host)
-├── hostRemotes.d.ts              # hand-written federated module type (fallback to dts)
+├── hostRemotes.d.ts              # hand-written federated module type (current source of truth)
 └── test/setup.ts                 # vitest setup
 ```
