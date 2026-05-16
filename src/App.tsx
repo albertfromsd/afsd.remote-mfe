@@ -1,11 +1,24 @@
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import Home from './pages/Home';
+import Details from './pages/Details';
+import Settings from './pages/Settings';
 
 const App = () => {
   return (
-    <section className="remote-app">
-      <h1>Remote MFE</h1>
-      <p>This view is served by the remote app via Module Federation.</p>
-    </section>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="details" element={<Details />} />
+      <Route path="settings" element={<Settings />} />
+      <Route
+        path="*"
+        element={
+          <section className="remote-page">
+            <h1>Remote MFE — Not Found</h1>
+          </section>
+        }
+      />
+    </Routes>
   );
 };
 
