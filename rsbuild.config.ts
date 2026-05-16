@@ -51,7 +51,9 @@ export default defineConfig({
         './App': './src/App',
       },
 
-      remotes: {},
+      remotes: {
+        hostTemplate: 'hostTemplate@http://localhost:3000/hostRemoteEntry.js',
+      },
 
       shared: {
         react: {
