@@ -12,6 +12,9 @@ export default function Home() {
         <li>
           <Link to="settings">Settings</Link>
         </li>
+        <li>
+          <Link to="gallery">Gallery (cart demo)</Link>
+        </li>
       </ul>
     </section>
   );
