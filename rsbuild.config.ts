@@ -1,8 +1,11 @@
+import path from 'node:path';
 import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { aliases } from './config.alias';
-import { APP_ID, APP_TITLE, DEV_PORT, MF_NAME, MF_FILENAME } from './rsbuild.constants';
+
+const appDirectory = __dirname;
+const resolveApp = (...segments: string[]) => path.resolve(appDirectory, ...segments);
 
 const { publicVars, rawPublicVars } = loadEnv({
   prefixes: ['PUBLIC_', 'APP_'],
@@ -16,16 +19,19 @@ export default defineConfig({
   },
 
   source: {
+    entry: {
+      index: './src/main.tsx',
+    },
     define: {
       ...publicVars,
       'process.env': JSON.stringify(rawPublicVars),
-      __APP_NAME__: JSON.stringify(APP_ID),
+      __APP_NAME__: JSON.stringify('remote-app'),
     },
   },
 
   server: {
-    port: DEV_PORT,
-    open: true,
+    port: 3001,
+    open: false,
   },
 
   dev: {
@@ -33,36 +39,39 @@ export default defineConfig({
   },
 
   html: {
-    title: APP_TITLE,
+    title: 'MFE Remote App',
   },
 
   moduleFederation: {
     options: {
-      name: MF_NAME,
-      filename: MF_FILENAME,
+      name: 'remoteTemplate',
+      filename: 'remoteEntry.js',
+
       exposes: {
         './App': './src/App',
       },
+
       remotes: {},
+
       shared: {
         react: {
           singleton: true,
-          eager: true,
+          eager: false,
           requiredVersion: false,
         },
         'react-dom': {
           singleton: true,
-          eager: true,
+          eager: false,
           requiredVersion: false,
         },
         'react-router-dom': {
           singleton: true,
-          eager: true,
+          eager: false,
           requiredVersion: false,
         },
         zustand: {
           singleton: true,
-          eager: true,
+          eager: false,
           requiredVersion: false,
         },
       },

@@ -1,14 +1,11 @@
 import './App.css';
-import Navbar from './features/Navbar/Navbar';
-import { navItems } from './router/nav-links';
 
 const App = () => {
   return (
-    <div className="content">
-      <Navbar items={navItems} />
-      <h1>Rsbuild with React</h1>
-      <p>Start building amazing things with Rsbuild.</p>
-    </div>
+    <section className="remote-app">
+      <h1>Remote MFE</h1>
+      <p>This view is served by the remote app via Module Federation.</p>
+    </section>
   );
 };
 

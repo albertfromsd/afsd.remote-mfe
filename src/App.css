@@ -7,22 +7,17 @@ body {
   background-image: linear-gradient(to bottom, #020917, #101725);
 }
 
-.content {
-  display: flex;
-  min-height: 100vh;
-  line-height: 1.1;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
+.remote-app {
+  padding: 2rem;
 }
 
-.content h1 {
-  font-size: 3.6rem;
+.remote-app h1 {
+  font-size: 2rem;
   font-weight: 700;
+  margin: 0 0 0.75rem;
 }
 
-.content p {
-  font-size: 1.2rem;
-  font-weight: 400;
-  opacity: 0.5;
+.remote-app p {
+  font-size: 1rem;
+  opacity: 0.75;
 }
