@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+body {
+  margin: 0;
+  color: #fff;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  background-image: linear-gradient(to bottom, #020917, #101725);
+}
+
+.remote-app {
+  padding: 2rem;
+}
+
+.remote-app h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.remote-app p {
+  font-size: 1rem;
+  opacity: 0.75;
+}
