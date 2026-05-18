@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { useSessionStore } from '@/stores/sessionAccessor';
 import './App.css';
 import Home from './pages/Home';
 import Details from './pages/Details';
@@ -6,6 +8,14 @@ import Settings from './pages/Settings';
 import Gallery from './pages/Gallery';
 
 const App = () => {
+  const theme = useSessionStore(s => s.theme);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme;
+  }, [theme]);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />

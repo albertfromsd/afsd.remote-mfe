@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 
 export type Theme = 'light' | 'dark';
 
@@ -28,49 +28,51 @@ export type SessionState = {
 const STORAGE_KEY = 'afsd.session.v1';
 
 export function createLocalSessionStore() {
-  return create<SessionState>()(
-    persist(
-      set => ({
-        userId: null,
-        displayName: null,
-        theme: 'dark',
-        cart: [],
-        setUser: user => set({ userId: user.userId, displayName: user.displayName }),
-        clearUser: () => set({ userId: null, displayName: null }),
-        setTheme: theme => set({ theme }),
-        addToCart: item =>
-          set(state => {
-            const existing = state.cart.find(c => c.id === item.id);
-            if (existing) {
-              return {
-                cart: state.cart.map(c =>
-                  c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c,
-                ),
-              };
-            }
-            return { cart: [...state.cart, { ...item, quantity: 1 }] };
-          }),
-        incrementCart: id =>
-          set(state => ({
-            cart: state.cart.map(c =>
-              c.id === id ? { ...c, quantity: c.quantity + 1 } : c,
-            ),
-          })),
-        decrementCart: id =>
-          set(state => ({
-            cart: state.cart
-              .map(c => (c.id === id ? { ...c, quantity: c.quantity - 1 } : c))
-              .filter(c => c.quantity > 0),
-          })),
-        removeFromCart: id =>
-          set(state => ({ cart: state.cart.filter(c => c.id !== id) })),
-        clearCart: () => set({ cart: [] }),
-      }),
-      {
-        name: STORAGE_KEY,
-        version: 1,
-        storage: createJSONStorage(() => sessionStorage),
-      },
-    ),
+  const creator = persist<SessionState>(
+    set => ({
+      userId: null,
+      displayName: null,
+      theme: 'dark',
+      cart: [],
+      setUser: user => set({ userId: user.userId, displayName: user.displayName }),
+      clearUser: () => set({ userId: null, displayName: null }),
+      setTheme: theme => set({ theme }),
+      addToCart: item =>
+        set(state => {
+          const existing = state.cart.find(c => c.id === item.id);
+          if (existing) {
+            return {
+              cart: state.cart.map(c =>
+                c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c,
+              ),
+            };
+          }
+          return { cart: [...state.cart, { ...item, quantity: 1 }] };
+        }),
+      incrementCart: id =>
+        set(state => ({
+          cart: state.cart.map(c =>
+            c.id === id ? { ...c, quantity: c.quantity + 1 } : c,
+          ),
+        })),
+      decrementCart: id =>
+        set(state => ({
+          cart: state.cart
+            .map(c => (c.id === id ? { ...c, quantity: c.quantity - 1 } : c))
+            .filter(c => c.quantity > 0),
+        })),
+      removeFromCart: id =>
+        set(state => ({ cart: state.cart.filter(c => c.id !== id) })),
+      clearCart: () => set({ cart: [] }),
+    }),
+    {
+      name: STORAGE_KEY,
+      version: 1,
+      storage: createJSONStorage(() => sessionStorage),
+    },
   );
+
+  return process.env.NODE_ENV === 'production'
+    ? create<SessionState>()(creator)
+    : create<SessionState>()(devtools(creator, { name: 'session-local' }));
 }
