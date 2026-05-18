@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useSessionStore } from '@/stores/sessionAccessor';
+import '@/shared/styles/global.scss';
 import './App.css';
 import Home from './pages/Home';
 import Details from './pages/Details';
