@@ -56,7 +56,7 @@ export default defineConfig({
       name: 'remoteTemplate',
       filename: 'remoteEntry.js',
 
-      runtimePlugins: ['./src/lib/mfRuntimePlugin.ts'],
+      runtimePlugins: ['./src/shared/lib/mfRuntimePlugin.ts'],
 
       exposes: {
         './App': './src/App',
@@ -93,6 +93,11 @@ export default defineConfig({
           requiredVersion: false,
         },
         zustand: {
+          singleton: true,
+          eager: false,
+          requiredVersion: false,
+        },
+        '@tanstack/react-query': {
           singleton: true,
           eager: false,
           requiredVersion: false,

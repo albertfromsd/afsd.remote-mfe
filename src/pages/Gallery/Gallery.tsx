@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useSessionStore } from '@/stores/sessionAccessor';
+import { useStore } from '@/shared/stores/storeAccessor';
 
 const ITEMS = [
   { id: 'apple', name: 'Apple', price: 1.0, emoji: '🍎' },
@@ -13,10 +13,10 @@ const ITEMS = [
 ];
 
 export default function Gallery() {
-  const addToCart = useSessionStore(s => s.addToCart);
-  const cart = useSessionStore(s => s.cart);
+  const addToCart = useStore((s) => s.addToCart);
+  const cart = useStore((s) => s.cart);
 
-  const qtyOf = (id: string) => cart.find(c => c.id === id)?.quantity ?? 0;
+  const qtyOf = (id: string) => cart.find((c) => c.id === id)?.quantity ?? 0;
 
   return (
     <section
@@ -49,7 +49,7 @@ export default function Gallery() {
           gap: '1rem',
         }}
       >
-        {ITEMS.map(item => {
+        {ITEMS.map((item) => {
           const inCart = qtyOf(item.id);
           return (
             <div
@@ -69,9 +69,7 @@ export default function Gallery() {
               <div style={{ marginBottom: '0.75rem' }}>${item.price.toFixed(2)}</div>
               <button
                 type="button"
-                onClick={() =>
-                  addToCart({ id: item.id, name: item.name, price: item.price })
-                }
+                onClick={() => addToCart({ id: item.id, name: item.name, price: item.price })}
                 style={{
                   background: '#ff0',
                   color: '#000',

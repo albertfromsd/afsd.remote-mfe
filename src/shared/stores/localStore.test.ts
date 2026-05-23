@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createLocalSessionStore } from './localSession';
+import { createLocalStore } from './localStore';
 
-describe('createLocalSessionStore (standalone fallback)', () => {
-  let store: ReturnType<typeof createLocalSessionStore>;
+describe('createLocalStore (standalone fallback)', () => {
+  let store: ReturnType<typeof createLocalStore>;
 
   beforeEach(() => {
     sessionStorage.clear();
-    store = createLocalSessionStore();
+    store = createLocalStore();
   });
 
   it('starts with empty cart and null user', () => {

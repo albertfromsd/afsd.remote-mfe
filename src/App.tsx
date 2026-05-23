@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { useSessionStore } from '@/stores/sessionAccessor';
+import { useStore } from '@/shared/stores/storeAccessor';
 import '@/shared/styles/global.scss';
-import './App.css';
+import './App.scss';
 import Home from './pages/Home';
 import Details from './pages/Details';
 import Settings from './pages/Settings';
 import Gallery from './pages/Gallery';
 
 const App = () => {
-  const theme = useSessionStore(s => s.theme);
+  const theme = useStore((s) => s.theme);
 
   useEffect(() => {
     const root = document.documentElement;
