@@ -1,4 +1,4 @@
-declare module 'hostTemplate/stores/session' {
+declare module 'hostTemplate/stores/store' {
   import type { UseBoundStore, StoreApi } from 'zustand';
 
   export type Theme = 'light' | 'dark';
@@ -10,7 +10,7 @@ declare module 'hostTemplate/stores/session' {
     quantity: number;
   };
 
-  export type SessionState = {
+  export type AppState = {
     userId: string | null;
     displayName: string | null;
     theme: Theme;
@@ -25,5 +25,5 @@ declare module 'hostTemplate/stores/session' {
     clearCart: () => void;
   };
 
-  export const useSessionStore: UseBoundStore<StoreApi<SessionState>>;
+  export const useStore: UseBoundStore<StoreApi<AppState>>;
 }

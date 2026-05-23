@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 
+// Standalone fallback for the federated host store. Must mirror the AppState
+// shape declared in host/src/shared/stores/store.ts. When the host shape
+// changes, three places update in lock-step:
+//   1. host/src/shared/stores/store.ts (canonical)
+//   2. this file
+//   3. ../types/remotes.d.ts
+
 export type Theme = 'light' | 'dark';
 
 export type CartItem = {
@@ -10,7 +17,7 @@ export type CartItem = {
   quantity: number;
 };
 
-export type SessionState = {
+export type AppState = {
   userId: string | null;
   displayName: string | null;
   theme: Theme;
@@ -25,44 +32,41 @@ export type SessionState = {
   clearCart: () => void;
 };
 
-const STORAGE_KEY = 'afsd.session.v1';
+const STORAGE_KEY = 'afsd.store.v1';
 
-export function createLocalSessionStore() {
-  const creator = persist<SessionState>(
-    set => ({
+export function createLocalStore() {
+  const creator = persist<AppState>(
+    (set) => ({
       userId: null,
       displayName: null,
       theme: 'dark',
       cart: [],
-      setUser: user => set({ userId: user.userId, displayName: user.displayName }),
+      setUser: (user) => set({ userId: user.userId, displayName: user.displayName }),
       clearUser: () => set({ userId: null, displayName: null }),
-      setTheme: theme => set({ theme }),
-      addToCart: item =>
-        set(state => {
-          const existing = state.cart.find(c => c.id === item.id);
+      setTheme: (theme) => set({ theme }),
+      addToCart: (item) =>
+        set((state) => {
+          const existing = state.cart.find((c) => c.id === item.id);
           if (existing) {
             return {
-              cart: state.cart.map(c =>
+              cart: state.cart.map((c) =>
                 c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c,
               ),
             };
           }
           return { cart: [...state.cart, { ...item, quantity: 1 }] };
         }),
-      incrementCart: id =>
-        set(state => ({
-          cart: state.cart.map(c =>
-            c.id === id ? { ...c, quantity: c.quantity + 1 } : c,
-          ),
+      incrementCart: (id) =>
+        set((state) => ({
+          cart: state.cart.map((c) => (c.id === id ? { ...c, quantity: c.quantity + 1 } : c)),
         })),
-      decrementCart: id =>
-        set(state => ({
+      decrementCart: (id) =>
+        set((state) => ({
           cart: state.cart
-            .map(c => (c.id === id ? { ...c, quantity: c.quantity - 1 } : c))
-            .filter(c => c.quantity > 0),
+            .map((c) => (c.id === id ? { ...c, quantity: c.quantity - 1 } : c))
+            .filter((c) => c.quantity > 0),
         })),
-      removeFromCart: id =>
-        set(state => ({ cart: state.cart.filter(c => c.id !== id) })),
+      removeFromCart: (id) => set((state) => ({ cart: state.cart.filter((c) => c.id !== id) })),
       clearCart: () => set({ cart: [] }),
     }),
     {
@@ -73,6 +77,6 @@ export function createLocalSessionStore() {
   );
 
   return process.env.NODE_ENV === 'production'
-    ? create<SessionState>()(creator)
-    : create<SessionState>()(devtools(creator, { name: 'session-local' }));
+    ? create<AppState>()(creator)
+    : create<AppState>()(devtools(creator, { name: 'app-store-local' }));
 }
