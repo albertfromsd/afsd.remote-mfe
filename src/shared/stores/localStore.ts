@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
+import { APP, STORAGE } from '@/shared/config/app.constants';
 
 // Standalone fallback for the federated host store. Must mirror the AppState
 // shape declared in host/src/shared/stores/store.ts. When the host shape
@@ -31,8 +32,6 @@ export type AppState = {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
 };
-
-const STORAGE_KEY = 'afsd.store.v1';
 
 export function createLocalStore() {
   const creator = persist<AppState>(
@@ -70,13 +69,13 @@ export function createLocalStore() {
       clearCart: () => set({ cart: [] }),
     }),
     {
-      name: STORAGE_KEY,
-      version: 1,
+      name: STORAGE.STORE_KEY,
+      version: STORAGE.STORE_VERSION,
       storage: createJSONStorage(() => sessionStorage),
     },
   );
 
   return process.env.NODE_ENV === 'production'
     ? create<AppState>()(creator)
-    : create<AppState>()(devtools(creator, { name: 'app-store-local' }));
+    : create<AppState>()(devtools(creator, { name: `${APP.NAME}-local` }));
 }

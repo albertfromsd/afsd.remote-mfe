@@ -2,14 +2,15 @@ import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { aliases } from './config.alias';
+import { APP, ENV, FEDERATION } from './src/shared/config/app.constants';
 
 const analyze = process.env.ANALYZE === 'true';
 
 const { publicVars, rawPublicVars } = loadEnv({
-  prefixes: ['PUBLIC_', 'APP_'],
+  prefixes: [...ENV.PUBLIC_PREFIXES],
 });
 
-const HOST_TEMPLATE_URL = rawPublicVars.PUBLIC_HOST_TEMPLATE_URL ?? 'http://localhost:3000';
+const HOST_TEMPLATE_URL = rawPublicVars.PUBLIC_HOST_TEMPLATE_URL ?? ENV.DEFAULT_HOST_URL;
 
 export default defineConfig({
   plugins: [pluginReact(), pluginSass()],
@@ -25,12 +26,12 @@ export default defineConfig({
     define: {
       ...publicVars,
       'process.env': JSON.stringify(rawPublicVars),
-      __APP_NAME__: JSON.stringify('remote-app'),
+      __APP_NAME__: JSON.stringify(APP.NAME),
     },
   },
 
   server: {
-    port: 3001,
+    port: APP.PORT,
     open: false,
   },
 
@@ -53,17 +54,18 @@ export default defineConfig({
 
   moduleFederation: {
     options: {
-      name: 'remoteTemplate',
-      filename: 'remoteEntry.js',
+      name: FEDERATION.NAME,
+      filename: FEDERATION.FILENAME,
 
       runtimePlugins: ['./src/shared/lib/mfRuntimePlugin.ts'],
 
       exposes: {
-        './App': './src/App',
+        [FEDERATION.EXPOSES.APP]: './src/App',
       },
 
       remotes: {
-        hostTemplate: `hostTemplate@${HOST_TEMPLATE_URL}/hostRemoteEntry.js`,
+        [FEDERATION.REMOTES.HOST_TEMPLATE.name]:
+          `${FEDERATION.REMOTES.HOST_TEMPLATE.name}@${HOST_TEMPLATE_URL}/${FEDERATION.REMOTES.HOST_TEMPLATE.entry}`,
       },
 
       // rsbuild's ModuleFederationConfig type wraps @rspack/core's
