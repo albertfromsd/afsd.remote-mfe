@@ -171,6 +171,25 @@ aligned with the host's
 `afsd.host-mfe/src/shared/lib/queryClient.ts`. When the host changes
 defaults, mirror them here.
 
+### Configuration constants
+
+Values shared across `rsbuild.config.ts`, `vitest.config.ts`, and source code
+live in [src/shared/config/app.constants.ts](src/shared/config/app.constants.ts).
+Single source of truth — when a literal needs to change, change it here.
+
+Current blocks: `FEDERATION` (NAME, FILENAME, EXPOSES, REMOTES), `APP` (NAME,
+PORT), `STORAGE` (STORE_KEY, STORE_VERSION), `ENV` (PUBLIC_PREFIXES, default
+URLs). **`STORAGE` and `ENV` values MUST match the host's `app.constants.ts`.**
+
+**Rules** (codified in [AGENTS.md](AGENTS.md)):
+
+- `*.constants.ts` is the naming convention for all consolidated-value files
+  in this codebase.
+- The file MUST be self-contained — no `@/...` alias imports, because build
+  configs load it before alias resolution runs. Relative imports / stdlib
+  only.
+- Use `as const` objects, not `enum`s.
+
 ### Type sharing across the federation boundary
 
 The `dts` option on `@module-federation/enhanced` is configured in
@@ -239,7 +258,7 @@ src/
 │   ├── Home/  Details/  Settings/
 │   └── Gallery/                  # cart-add demo (writes federated store)
 └── shared/                       # anything imported by 2+ siblings above
-    ├── config/                   # app.config.ts (build/env-derived settings)
+    ├── config/                   # app.constants.ts (shared by build configs + source)
     ├── lib/                      # external-world adapters
     │   ├── api.ts                # axios client + interceptors
     │   ├── queryClient.ts        # standalone-only TanStack Query factory
