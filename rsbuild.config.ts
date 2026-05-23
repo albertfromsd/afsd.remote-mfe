@@ -1,8 +1,11 @@
+import path from 'node:path';
 import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { aliases } from './config.alias';
 import { APP, ENV, FEDERATION } from './src/shared/config/app.constants';
+
+const SRC_DIR = path.resolve(__dirname, 'src');
 
 const analyze = process.env.ANALYZE === 'true';
 
@@ -13,7 +16,19 @@ const { publicVars, rawPublicVars } = loadEnv({
 const HOST_TEMPLATE_URL = rawPublicVars.PUBLIC_HOST_TEMPLATE_URL ?? ENV.DEFAULT_HOST_URL;
 
 export default defineConfig({
-  plugins: [pluginReact(), pluginSass()],
+  plugins: [
+    pluginReact(),
+    pluginSass({
+      sassLoaderOptions: {
+        // Adding `src` to the sass load paths lets every .scss file write
+        // `@use 'shared/styles' as *;` regardless of where it lives in the
+        // tree. Keeps imports stable across moves and avoids ../../.. chains.
+        sassOptions: {
+          loadPaths: [SRC_DIR],
+        },
+      },
+    }),
+  ],
 
   resolve: {
     alias: aliases,
