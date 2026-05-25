@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useStore } from '@/shared/stores/storeAccessor';
+import Page from '@/components/Page';
 import '@/shared/styles/global.scss';
-import './App.scss';
 import Home from './pages/Home';
 import Details from './pages/Details';
 import Settings from './pages/Settings';
@@ -23,14 +23,7 @@ const App = () => {
       <Route path="details" element={<Details />} />
       <Route path="settings" element={<Settings />} />
       <Route path="gallery" element={<Gallery />} />
-      <Route
-        path="*"
-        element={
-          <section className="remote-page">
-            <h1>Remote MFE — Not Found</h1>
-          </section>
-        }
-      />
+      <Route path="*" element={<Page eyebrow="Remote MFE" title="Not Found" />} />
     </Routes>
   );
 };
