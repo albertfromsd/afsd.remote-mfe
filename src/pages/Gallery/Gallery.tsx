@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Page from '@/components/Page';
 import { useStore } from '@/shared/stores/storeAccessor';
 
 const ITEMS = [
@@ -19,33 +20,15 @@ export default function Gallery() {
   const qtyOf = (id: string) => cart.find((c) => c.id === id)?.quantity ?? 0;
 
   return (
-    <section
-      style={{
-        padding: '2rem',
-        background: 'repeating-linear-gradient(45deg, #220, #220 10px, #311 10px, #311 20px)',
-        minHeight: 'calc(100vh - 56px)',
-      }}
+    <Page
+      eyebrow="Remote MFE"
+      title="Gallery"
+      description="Adds write to the federated session store — the host's navbar cart count updates instantly."
     >
-      <h1
-        style={{
-          fontFamily: 'Comic Sans MS, cursive',
-          color: '#ff0',
-          textShadow: '3px 3px 0 #f0f, -2px -2px 0 #0ff',
-          fontSize: '3rem',
-          margin: '0 0 0.5rem',
-        }}
-      >
-        ✨ THE GALLERY ✨
-      </h1>
-      <p style={{ color: '#fff', fontFamily: 'Comic Sans MS, cursive', marginBottom: '2rem' }}>
-        Owned by the remote MFE. Adds write to the federated session store — count updates in the
-        host's navbar instantly.
-      </p>
-
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(11.25rem, 1fr))',
           gap: '1rem',
         }}
       >
@@ -55,36 +38,57 @@ export default function Gallery() {
             <div
               key={item.id}
               style={{
-                background: '#ff1493',
-                border: '4px dashed #0ff',
                 padding: '1rem',
                 textAlign: 'center',
-                color: '#fff',
-                fontFamily: 'Comic Sans MS, cursive',
-                boxShadow: '6px 6px 0 #000',
+                backgroundColor: 'var(--color-bg-surface)',
+                border: '1px solid var(--color-border-subtle)',
+                borderRadius: 'var(--radius-lg)',
               }}
             >
-              <div style={{ fontSize: '4rem', lineHeight: 1 }}>{item.emoji}</div>
-              <div style={{ fontSize: '1.25rem', margin: '0.5rem 0 0.25rem' }}>{item.name}</div>
-              <div style={{ marginBottom: '0.75rem' }}>${item.price.toFixed(2)}</div>
+              <div style={{ fontSize: '3rem', lineHeight: 1 }}>{item.emoji}</div>
+              <div
+                style={{
+                  fontSize: 'var(--font-size-md)',
+                  fontWeight: 'var(--font-weight-semibold)',
+                  margin: '0.5rem 0 0.25rem',
+                  color: 'var(--color-text-primary)',
+                }}
+              >
+                {item.name}
+              </div>
+              <div
+                style={{
+                  marginBottom: '0.75rem',
+                  color: 'var(--color-text-secondary)',
+                  fontSize: 'var(--font-size-sm)',
+                }}
+              >
+                ${item.price.toFixed(2)}
+              </div>
               <button
                 type="button"
                 onClick={() => addToCart({ id: item.id, name: item.name, price: item.price })}
                 style={{
-                  background: '#ff0',
-                  color: '#000',
-                  border: '3px solid #000',
+                  background: 'var(--color-accent)',
+                  color: 'var(--color-text-on-accent)',
+                  border: 0,
                   padding: '0.5rem 1rem',
-                  fontFamily: 'Comic Sans MS, cursive',
-                  fontWeight: 'bold',
+                  fontWeight: 'var(--font-weight-semibold)',
+                  fontSize: 'var(--font-size-sm)',
+                  borderRadius: 'var(--radius-sm)',
                   cursor: 'pointer',
-                  boxShadow: '3px 3px 0 #f0f',
                 }}
               >
-                ADD TO CART
+                Add to cart
               </button>
               {inCart > 0 && (
-                <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#0ff' }}>
+                <div
+                  style={{
+                    marginTop: '0.5rem',
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-text-muted)',
+                  }}
+                >
                   in cart: {inCart}
                 </div>
               )}
@@ -94,10 +98,8 @@ export default function Gallery() {
       </div>
 
       <p style={{ marginTop: '2rem' }}>
-        <Link to=".." style={{ color: '#0ff' }}>
-          ← back
-        </Link>
+        <Link to="..">← back</Link>
       </p>
-    </section>
+    </Page>
   );
 }

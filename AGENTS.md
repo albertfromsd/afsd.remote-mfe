@@ -153,6 +153,8 @@ host.
 
 ## Styling
 
+See [STYLING.md](STYLING.md) for the full rules: rem-by-default, px-only-with-justification, no `!important` outside documented exceptions, token consumption, mixin usage, breakpoint helpers, and the reviewer's checklist.
+
 **Use semantic CSS vars from [`shared/styles/_tokens.scss`](src/shared/styles/_tokens.scss).
 Never write raw colors, sizes, radii, or shadows in component styles.**
 

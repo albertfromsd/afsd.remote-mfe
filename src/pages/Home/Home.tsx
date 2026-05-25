@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
+import Page from '@/components/Page';
 
 export default function Home() {
   return (
-    <section className="remote-page">
-      <h1>Remote MFE — Home</h1>
-      <p>This view belongs to the remote app and is served via Module Federation.</p>
+    <Page
+      eyebrow="Remote MFE"
+      title="Home"
+      description="This view belongs to the remote app and is served via Module Federation."
+    >
       <ul>
         <li>
           <Link to="details">Details</Link>
@@ -16,6 +19,6 @@ export default function Home() {
           <Link to="gallery">Gallery (cart demo)</Link>
         </li>
       </ul>
-    </section>
+    </Page>
   );
 }
