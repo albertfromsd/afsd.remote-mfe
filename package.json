@@ -19,6 +19,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "gen": "plop",
+    "gen:component": "plop component",
+    "gen:page": "plop page",
     "lint": "eslint .",
     "format": "prettier --write .",
     "storybook": "storybook dev -p 6006",
@@ -46,6 +49,7 @@
     "react-dom": "^19.2.3",
     "react-error-boundary": "^6.1.1",
     "react-router-dom": "^7.13.1",
+    "zod": "^3.24.1",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
@@ -74,6 +78,8 @@
     "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "lint-staged": "^16.2.7",
+    "msw": "^2.7.0",
+    "plop": "^4.0.1",
     "prettier": "^3.8.1",
     "sass": "^1.97.3",
     "storybook": "^10.2.13",

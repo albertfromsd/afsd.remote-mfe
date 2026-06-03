@@ -12,6 +12,20 @@ follow this file.
 - `pnpm typecheck` — `tsc --noEmit`
 - `pnpm test` — vitest run
 - `pnpm lint` / `pnpm format` — ESLint / Prettier
+- `pnpm gen` / `pnpm gen:component <Name>` / `pnpm gen:page <Name>` — scaffold from `plop-templates/`. (No `gen:slice` here — host owns slices; run that from the host template.)
+
+## Companion docs (host is canonical owner)
+
+The host template owns canonical documentation. From this template's root:
+
+- **`../afsd.host-mfe/STATE_CONTRACT.md`** — three-file `AppState` contract. When the host slice shape changes, this file lists what to update on the remote side.
+- **`../afsd.host-mfe/docs/TROUBLESHOOTING.md`** — symptom-first failure-mode index. Federation errors, store-sync, HMR.
+- **`../afsd.host-mfe/docs/REMOTE_HOST_COMMS.md`** — the four communication patterns (shared store, event bus, query cache, props) with when-to-use guidance.
+- **`../afsd.host-mfe/docs/DEPLOYMENT.md`** — env vars, CORS, federation versioning.
+- **`../afsd.host-mfe/docs/adr/`** — ADRs for load-bearing decisions.
+
+If you've cloned only the remote, these links won't resolve — fetch the host
+template alongside (`../afsd.host-mfe/`) or read them on the upstream repo.
 
 ## External docs
 
@@ -141,9 +155,13 @@ This remote does NOT define the canonical store — the host does
 
 **When the host adds a slice:** mirror the new fields into BOTH
 `localStore.ts` and `remotes.d.ts`. These three files (host's slices + this
-repo's localStore + this repo's remotes.d.ts) form a contract. Drift between
-them is a silent standalone-vs-embedded behavior bug — embedded gets the new
-fields; standalone falls back to an outdated shape.
+repo's localStore + this repo's remotes.d.ts) form a contract documented in
+[../afsd.host-mfe/STATE_CONTRACT.md](../afsd.host-mfe/STATE_CONTRACT.md).
+Drift between them is a silent standalone-vs-embedded behavior bug —
+embedded gets the new fields; standalone falls back to an outdated shape.
+
+The host's CI runs `pnpm check:sync` which extracts the field list from all
+three files and fails on mismatch. Locally, `cd ../afsd.host-mfe && pnpm check:sync`.
 
 **Don't define new slices here.** Slices belong with the canonical store on
 the host. If the remote needs state that's NOT shared with the host (e.g.,

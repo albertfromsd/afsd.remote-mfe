@@ -27,3 +27,10 @@ declare module 'hostTemplate/stores/store' {
 
   export const useStore: UseBoundStore<StoreApi<AppState>>;
 }
+
+declare module 'hostTemplate/lib/eventBus' {
+  // Re-export the bus's TS surface from the local copy. The local file is
+  // kept byte-identical to the host's via scripts/check-sync.ts, so this
+  // re-export is always shape-correct.
+  export * from '@/shared/lib/eventBus';
+}
