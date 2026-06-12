@@ -24,6 +24,7 @@
     "gen:page": "plop page",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "check:sync": "tsx scripts/check-sync.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepare": "husky"

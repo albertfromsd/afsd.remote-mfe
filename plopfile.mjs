@@ -1,11 +1,23 @@
 /**
  * Plop generators for the AFSD remote template.
  *
- * No `slice` generator here — slices are part of the cross-template
- * AppState contract and the host owns the canonical definition (see
- * ../afsd.host-mfe/STATE_CONTRACT.md). To add a slice, run
- * `pnpm gen:slice` from the host template, then mirror its shape into
- * `src/shared/stores/localStore.ts` and `src/shared/types/remotes.d.ts`.
+ * ─────────────────────────────────────────────────────────────────────
+ * No `slice` generator here — INTENTIONAL.
+ *
+ * Slices are part of the cross-template AppState contract and the host
+ * owns the canonical definition. Adding one from the remote would split
+ * authorship and defeat `pnpm check:sync`. See STATE_CONTRACT.md (this
+ * repo) for the full rules.
+ *
+ * To add a slice (the only correct workflow):
+ *   1. cd ../afsd.host-mfe && pnpm gen:slice
+ *   2. Compose it into the host's store.ts.
+ *   3. Mirror the fields into this repo's src/shared/stores/localStore.ts.
+ *   4. Mirror the type into this repo's src/shared/types/remotes.d.ts.
+ *   5. Run `pnpm check:sync` here to verify parity with the host.
+ *   6. Bump STORAGE.STORE_VERSION in app.constants.ts on BOTH sides iff
+ *      the persisted shape changed incompatibly.
+ * ─────────────────────────────────────────────────────────────────────
  */
 
 export default function plop(/** @type {import('plop').NodePlopAPI} */ plop) {

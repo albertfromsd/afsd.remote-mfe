@@ -15,7 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout remote
+        uses: actions/checkout@v4
+        with:
+          path: afsd.remote-mfe
+
+      # The drift check (`pnpm check:sync`) reads files from the sibling
+      # host template. CI checks out both side-by-side; SYNC_HOST_PATH then
+      # resolves to ../afsd.host-mfe relative to the remote root. If the
+      # host repo isn't available (private, renamed, fork), the checkout
+      # fails open and the sync step uses SYNC_STRICT=1 to hard-fail with a
+      # clear message — preferable to silently skipping the contract check.
+      - name: Checkout host (sibling for sync check)
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          repository: albertfromsd/afsd.host-mfe
+          path: afsd.host-mfe
 
       - uses: pnpm/action-setup@v4
         with:
@@ -24,20 +40,36 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version-file: afsd.remote-mfe/.nvmrc
           cache: pnpm
+          cache-dependency-path: afsd.remote-mfe/pnpm-lock.yaml
 
       - name: Install dependencies
+        working-directory: afsd.remote-mfe
         run: pnpm install --frozen-lockfile
 
       - name: Lint
+        working-directory: afsd.remote-mfe
         run: pnpm lint
 
       - name: Typecheck
+        working-directory: afsd.remote-mfe
         run: pnpm typecheck
 
       - name: Test
+        working-directory: afsd.remote-mfe
         run: pnpm test
 
+      # SYNC_STRICT=1 makes the script hard-fail on a missing sibling, so a
+      # silently-skipped checkout can't bypass the drift check. If you've
+      # forked this template and don't have a paired host repo, drop this
+      # step or unset SYNC_STRICT.
+      - name: Cross-template sync check
+        working-directory: afsd.remote-mfe
+        env:
+          SYNC_STRICT: '1'
+        run: pnpm check:sync
+
       - name: Build
+        working-directory: afsd.remote-mfe
         run: pnpm build
